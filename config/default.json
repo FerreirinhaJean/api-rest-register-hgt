@@ -7,6 +7,6 @@
         "password": "8355c5eb"
     },
     "api": {
-        "port": 443
+        "port": 80
     }
 }
