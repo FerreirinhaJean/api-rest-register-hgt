@@ -14,7 +14,7 @@ class Register {
             else {
                 const id = results.insertId;
                 const registerInsert = { id, ...register };
-                response.status(200).json({ registerInsert });
+                response.status(201).json({ registerInsert });
             }
         })
     };
@@ -26,22 +26,13 @@ class Register {
             if (error) {
                 response.status(400).json(error);
             } else {
-                const res = {
-                    count: results.length,
-                    registers:
-                        results.map(register => {
-                            return {
-                                id: register.id,
-                                date: moment(register.data).format('DD/MM/YYYY HH:mm:ss'),
-                                typeExam: register.tipo_exame,
-                                value: register.resultado,
-                                description: register.observacao,
-                                createdAt: moment(register.data_criacao).format('DD/MM/YYYY HH:mm:ss')
-                            }
-                        })
-                };
 
-                response.status(200).json(res);
+                if (results.length == 0)
+                    return response.status(404).send({
+                        message: 'Register not found'
+                    });
+
+                response.status(200).json(this.createResponseList(results));
             }
         })
     };
@@ -53,17 +44,13 @@ class Register {
             if (error)
                 response.status(400).json(error);
             else {
-                const result = results[0];
-                const res = {
-                    id: result.id,
-                    date: moment(result.data).format('DD/MM/YYYY HH:mm:ss'),
-                    typeExam: result.tipo_exame,
-                    value: result.resultado,
-                    description: result.observacao,
-                    createdAt: moment(result.data_criacao).format('DD/MM/YYYY HH:mm:ss')
-                };
 
-                response.status(200).json(res);
+                if (results.length == 0)
+                    return response.status(404).send({
+                        message: 'Register not found'
+                    });
+
+                response.status(200).json(this.createResponse(results[0]));
             }
         })
     };
@@ -141,6 +128,35 @@ class Register {
         }
 
     };
+
+    createResponseList(registers) {
+        return {
+            count: registers.length,
+            registers:
+                registers.map(register => {
+                    return {
+                        id: register.id,
+                        date: moment(register.data).format('DD/MM/YYYY HH:mm:ss'),
+                        typeExam: register.tipo_exame,
+                        value: register.resultado,
+                        description: register.observacao,
+                        createdAt: moment(register.data_criacao).format('DD/MM/YYYY HH:mm:ss')
+                    }
+                })
+        };
+    };
+
+    createResponse(register) {
+        return {
+            id: register.id,
+            date: moment(register.data).format('DD/MM/YYYY HH:mm:ss'),
+            typeExam: register.tipo_exame,
+            value: register.resultado,
+            description: register.observacao,
+            createdAt: moment(register.data_criacao).format('DD/MM/YYYY HH:mm:ss')
+        };
+    };
+
 };
 
 module.exports = new Register;

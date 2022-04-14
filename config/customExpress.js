@@ -7,10 +7,24 @@ module.exports = () => {
     app.use(express.json());
     app.use(morgan('dev'));
 
+    //CORS
+    app.use((request, response, next) => {
+        response.header('Access-Control-Allow-Origin', '*');
+        response.header('Access-Control-Allow-Header',
+            'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+        if (response.method === 'OPTIONS') {
+            response.header('Access-Control-Allow-Methods', 'PUT, POST, DELETE, GET');
+            return response.status(200).send({});
+        }
+
+        next();
+    });
+
     app.use('/registros', registerRoute);
 
     app.use((request, response, next) => {
-        const error = new Error('Não encontrado');
+        const error = new Error('Not found');
         error.status = 404;
         next(error);
     });
