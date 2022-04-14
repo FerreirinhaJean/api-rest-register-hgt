@@ -26,7 +26,22 @@ class Register {
             if (error) {
                 response.status(400).json(error);
             } else {
-                response.status(200).json(results);
+                const res = {
+                    count: results.length,
+                    registers:
+                        results.map(register => {
+                            return {
+                                id: register.id,
+                                date: moment(register.data).format('DD/MM/YYYY HH:mm:ss'),
+                                typeExam: register.tipo_exame,
+                                value: register.resultado,
+                                description: register.observacao,
+                                createdAt: moment(register.data_criacao).format('DD/MM/YYYY HH:mm:ss')
+                            }
+                        })
+                };
+
+                response.status(200).json(res);
             }
         })
     };
@@ -37,8 +52,19 @@ class Register {
         connection.query(sql, (error, results) => {
             if (error)
                 response.status(400).json(error);
-            else
-                response.status(200).json(results[0]);
+            else {
+                const result = results[0];
+                const res = {
+                    id: result.id,
+                    date: moment(result.data).format('DD/MM/YYYY HH:mm:ss'),
+                    typeExam: result.tipo_exame,
+                    value: result.resultado,
+                    description: result.observacao,
+                    createdAt: moment(result.data_criacao).format('DD/MM/YYYY HH:mm:ss')
+                };
+
+                response.status(200).json(res);
+            }
         })
     };
 

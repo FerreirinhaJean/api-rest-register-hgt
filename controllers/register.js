@@ -1,34 +1,34 @@
 const Register = require('../models/register');
+const express = require('express');
+const router = express.Router();
 
-module.exports = app => {
+router.get('/', (request, response) => {
+    const date = request.query.date;
+    if (date)
+        Register.listByDate(date, response);
+    else
+        Register.list(response);
+});
 
-    app.get('/registros', (request, response) => {
-        const date = request.query.date;
-        if (date)
-            Register.listByDate(date, response);
-        else
-            Register.list(response);
-    });
+router.get('/:id', (request, response) => {
+    const id = parseInt(request.params.id);
+    Register.findById(id, response);
+});
 
-    app.get('/registros/:id', (request, response) => {
-        const id = parseInt(request.params.id);
-        Register.findById(id, response);
-    });
+router.post('/', (request, response) => {
+    const register = request.body;
+    Register.add(register, response)
+});
 
-    app.post('/registros', (request, response) => {
-        const register = request.body;
-        Register.add(register, response)
-    });
+router.delete('/:id', (request, response) => {
+    const id = parseInt(request.params.id);
+    Register.deleteById(id, response);
+});
 
-    app.delete('/registros/:id', (request, response) => {
-        const id = parseInt(request.params.id);
-        Register.deleteById(id, response);
-    });
+router.put('/:id', (request, response) => {
+    const id = parseInt(request.params.id);
+    const values = request.body;
+    Register.updateById(id, values, response);
+})
 
-    app.put('/registros/:id', (request, response) => {
-        const id = parseInt(request.params.id);
-        const values = request.body;
-        Register.updateById(id, values, response);
-    })
-
-};
+module.exports = router;

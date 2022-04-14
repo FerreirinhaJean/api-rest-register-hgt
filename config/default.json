@@ -1,10 +1,19 @@
 {
-    "mysql": {        
-        "host": "us-cdbr-east-05.cleardb.net",
-        "port": "3306",
-        "database": "heroku_e1f9f253d7f766a",
-        "user": "bd591c80b01e37",
-        "password": "8355c5eb"
+    "mysql": {
+        "dev": {
+            "host": "localhost",
+            "port": "3306",
+            "database": "registro_hgt",
+            "user": "root",
+            "password": "admin"
+        },
+        "prod": {
+            "host": "us-cdbr-east-05.cleardb.net",
+            "port": "3306",
+            "database": "heroku_e1f9f253d7f766a",
+            "user": "bd591c80b01e37",
+            "password": "8355c5eb"
+        }
     },
     "api": {
         "port": 3000
