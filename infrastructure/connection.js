@@ -2,11 +2,11 @@ const mysql = require('mysql');
 const config = require('config');
 
 const connection = mysql.createConnection({
-    host: config.get('mysql.dev.host'),
-    port: config.get('mysql.dev.port'),
-    user: config.get('mysql.dev.user'),
-    password: config.get('mysql.dev.password'),
-    database: config.get('mysql.dev.database')
+    host: config.get('mysql.prod.host'),
+    port: config.get('mysql.prod.port'),
+    user: config.get('mysql.prod.user'),
+    password: config.get('mysql.prod.password'),
+    database: config.get('mysql.prod.database')
 });
 
 module.exports = connection;

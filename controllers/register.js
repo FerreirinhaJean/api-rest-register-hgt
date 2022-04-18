@@ -1,6 +1,5 @@
 const Register = require('../models/register');
 const express = require('express');
-const register = require('../models/register');
 const router = express.Router();
 
 router.get('/', Register.authenticated, (request, response) => {
