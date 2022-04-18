@@ -1,5 +1,6 @@
 const connection = require('../infrastructure/connection');
 const moment = require('moment');
+const config = require('config');
 
 class Register {
     add(register, response) {
@@ -13,8 +14,7 @@ class Register {
                 response.status(400).json(error);
             else {
                 const id = results.insertId;
-                const registerInsert = { id, ...register };
-                response.status(201).json({ registerInsert });
+                response.status(201).json(this.createResponse({ id, ...register }));
             }
         })
     };
@@ -26,12 +26,6 @@ class Register {
             if (error) {
                 response.status(400).json(error);
             } else {
-
-                if (results.length == 0)
-                    return response.status(404).send({
-                        message: 'Register not found'
-                    });
-
                 response.status(200).json(this.createResponseList(results));
             }
         })
@@ -62,7 +56,7 @@ class Register {
             if (error)
                 response.status(400).json(error);
             else
-                response.status(200).json({ id });
+                response.status(202).json({ message: 'Successfully deleted', id });
         });
     };
 
@@ -106,8 +100,9 @@ class Register {
             connection.query(sql, (error, results) => {
                 if (error)
                     response.status(400).json(error);
-                else
-                    response.status(200).json(results);
+                else {
+                    response.status(200).json(this.createResponseList(results));
+                }
             });
         }
         else if (dateMonthYear.isValid()) {
@@ -116,21 +111,22 @@ class Register {
             connection.query(sql, (error, results) => {
                 if (error)
                     response.status(400).json(error);
-                else
-                    response.status(200).json(results);
+                else {
+                    response.status(200).json(this.createResponseList(results));
+                }
             });
         }
         else {
             response.status(400).json({
-                nome: 'filtro por data',
-                message: 'Filtro informado é inválido'
+                name: 'Filter by date',
+                message: 'Invalid filter'
             });
         }
 
     };
 
     createResponseList(registers) {
-        return {
+        return registers.length > 0 ? {
             count: registers.length,
             registers:
                 registers.map(register => {
@@ -143,13 +139,13 @@ class Register {
                         createdAt: moment(register.data_criacao).format('DD/MM/YYYY HH:mm:ss')
                     }
                 })
-        };
+        } : {};
     };
 
     createResponse(register) {
         return {
             id: register.id,
-            date: moment(register.data).format('DD/MM/YYYY HH:mm:ss'),
+            date: moment(register.data, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY HH:mm:ss'),
             typeExam: register.tipo_exame,
             value: register.resultado,
             description: register.observacao,
@@ -157,6 +153,13 @@ class Register {
         };
     };
 
+    authenticated(request, response, next) {
+        const error = { error: 'You are not authorized to access this API' };
+        if (request.headers.authorization === config.get('api.authorization'))
+            return next();
+        else
+            return response.status(401).send(error);
+    }
 };
 
 module.exports = new Register;

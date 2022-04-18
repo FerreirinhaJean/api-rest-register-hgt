@@ -1,8 +1,9 @@
 const Register = require('../models/register');
 const express = require('express');
+const register = require('../models/register');
 const router = express.Router();
 
-router.get('/', (request, response) => {
+router.get('/', Register.authenticated, (request, response) => {
     const date = request.query.date;
     if (date)
         Register.listByDate(date, response);
@@ -10,22 +11,22 @@ router.get('/', (request, response) => {
         Register.list(response);
 });
 
-router.get('/:id', (request, response) => {
+router.get('/:id', Register.authenticated, (request, response) => {
     const id = parseInt(request.params.id);
     Register.findById(id, response);
 });
 
-router.post('/', (request, response) => {
+router.post('/', Register.authenticated, (request, response) => {
     const register = request.body;
     Register.add(register, response)
 });
 
-router.delete('/:id', (request, response) => {
+router.delete('/:id', Register.authenticated, (request, response) => {
     const id = parseInt(request.params.id);
     Register.deleteById(id, response);
 });
 
-router.put('/:id', (request, response) => {
+router.put('/:id', Register.authenticated, (request, response) => {
     const id = parseInt(request.params.id);
     const values = request.body;
     Register.updateById(id, values, response);
