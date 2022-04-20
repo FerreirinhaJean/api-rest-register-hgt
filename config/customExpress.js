@@ -1,27 +1,17 @@
 const express = require('express');
 const morgan = require('morgan');
-const registerRoute = require('../controllers/register');
+const registerRoute = require('../routes/register');
+const userRoute = require('../routes/user');
+const cors = require('cors');
 
 module.exports = () => {
     const app = express();
     app.use(express.json());
     app.use(morgan('dev'));
+    app.use(cors());
 
-    //CORS
-    app.use((request, response, next) => {
-        response.header('Access-Control-Allow-Origin', '*');
-        response.header('Access-Control-Allow-Header',
-            'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-        if (response.method === 'OPTIONS') {
-            response.header('Access-Control-Allow-Methods', 'PUT, POST, DELETE, GET');
-            return response.status(200).send({});
-        }
-
-        next();
-    });
-
-    app.use('/registros', registerRoute);
+    app.use('/api/registros', registerRoute);
+    app.use('/api/usuarios', userRoute);
 
     app.use((request, response, next) => {
         const error = new Error('Not found');
