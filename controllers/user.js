@@ -6,6 +6,23 @@ function isValidId(id) {
     return mongoose.Types.ObjectId.isValid(id);
 };
 
+function responseError(errors) {
+    const keysSet = Object.keys(errors);
+
+    let fieldErrors = [];
+
+    for (let key in keysSet) {
+        fieldErrors.push({ field: keysSet[key], message: errors[keysSet[key]].message });
+    }
+
+    return fieldErrors;
+};
+
+async function isDuplicateCPF(cpf) {
+    const result = await User.findOne({ cpf });
+    return result;
+}
+
 const user = {
     async getAll() {
         const error = {
@@ -45,28 +62,49 @@ const user = {
 
     async create({ firstName, lastName, birthDate, cpf }) {
         const error = {
-            error: 'Dados inválidos para criar um novo usuário'
+            error: 'Invalid data to create a new user'
         };
 
-        if (!firstName || !lastName || !birthDate || !cpf) return error;
+        const user = new User({
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: birthDate,
+            cpf: cpf
+        });
+
+        const isNotValid = user.validateSync();
+
+        if (isNotValid) return { ...error, fields: responseError(isNotValid.errors) };
+        if (await isDuplicateCPF(cpf)) return { error: 'CPF entered is already registered' };
 
         try {
             return await User.create({ firstName, lastName, birthDate, cpf });
-        } catch {
+        } catch (erros) {
             return error;
         }
     },
 
     async update({ _id, firstName, lastName, birthDate }) {
         const error = {
-            error: 'Dados inválidos para atualizar o usuário'
+            error: 'Invalid data to update a user'
         };
 
-        if (!_id || !firstName || !lastName || !birthDate) return error;
+        const user = new User({
+            firstName: firstName,
+            lastName: lastName,
+            birthDate: birthDate
+        });
+
+        const isNotValid = user.validateSync({ pathsToSkip: ['cpf'] });
+
+        if (!_id) return error;
+        if (isNotValid) return {
+            ...error, fields: responseError(isNotValid.errors)
+        };
 
         try {
             const userUpdate = await User.updateOne({ _id }, { $set: { firstName, lastName, birthDate } });
-            return userUpdate.matchedCount ? user.getById({ _id }) : error;
+            return userUpdate.matchedCount ? this.getById({ _id }) : error;
         } catch {
             return error;
         }
@@ -81,7 +119,7 @@ const user = {
 
         try {
             const deleteUser = await User.deleteOne({ _id });
-            return deleteUser.deletedCount ? 'Usuário deletado com sucesso!' : error;
+            return deleteUser.deletedCount ? { id: _id, message: 'User has been deleted' } : error;
         } catch {
             return error;
         }
