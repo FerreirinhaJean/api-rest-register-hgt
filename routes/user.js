@@ -1,6 +1,5 @@
 const user = require('../controllers/user');
 const express = require('express');
-const { default: mongoose } = require('mongoose');
 const router = express.Router();
 
 function send(req, res, response) {
@@ -45,6 +44,6 @@ router.delete('/:id', async (req, res) => {
     });
 
     send(req, res, response);
-})
+});
 
 module.exports = router;

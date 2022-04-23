@@ -11,10 +11,20 @@ router.get('/', async (req, res) => {
     send(req, res, response);
 });
 
-router.post('/', async (req, res) => {
+router.get('/:user_cpf', async (req, res) => {
+    const response = await register.getByCpf({
+        cpf: req.params.user_cpf
+    });
+    send(req, res, response);
+});
+
+router.post('/:user_cpf', async (req, res) => {
     let response = await register.create({
-        value: req.body.name,
-        note: req.body.email
+        cpf: req.params.user_cpf,
+        date: req.body.date,
+        value: req.body.value,
+        note: req.body.note,
+        type: req.body.type
     });
     send(req, res, response);
 });

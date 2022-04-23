@@ -1,12 +1,25 @@
 const mongoose = require('mongoose');
 const Register = require('../models/register');
+const userController = require('./user');
+
+function responseError(errors) {
+    const keysSet = Object.keys(errors);
+
+    let fieldErrors = [];
+
+    for (let key in keysSet) {
+        fieldErrors.push({ field: keysSet[key], message: errors[keysSet[key]].message });
+    }
+
+    return fieldErrors;
+};
 
 const register = {
     async getAll() {
         const error = {
-            error: 'Registros não encontrados'
+            error: 'Registers not found'
         };
-        return await Register.Register.find() || error;
+        return await Register.find() || error;
     },
 
     async getById({ _id }) {
@@ -16,17 +29,50 @@ const register = {
         if (!_id) return error;
 
         try {
-            return await Register.Register.findOne({ _id });
+            return await Register.findOne({ _id });
         } catch {
             return error;
         }
     },
 
-    async create({ value, note }) {
+    async getByCpf({ cpf }) {
+        const error = {
+            error: 'CPF is not found'
+        };
+
+        if (!cpf) return error;
+
         try {
-            return await Register.Register.create({ value, note });
+            return await Register.find({ cpf }) || error;
         } catch {
-            return { error: 'Ocorreu um erro' };
+            return error;
+        }
+
+    },
+
+    async create({ cpf, date, value, note, type }) {
+        const error = {
+            error: 'Data is not valid to create a new register'
+        };
+
+        const register = new Register({
+            date: date,
+            value: value,
+            note: note,
+            type: type,
+            cpf: cpf
+        });
+
+        const hasUser = await userController.getByCpf({ cpf });
+        if (!hasUser) return { error: 'CPF is not exist' }
+
+        const isNotValid = register.validateSync();
+        if (isNotValid) return { ...error, fields: responseError(isNotValid.errors) };
+
+        try {
+            return await Register.create(register);
+        } catch {
+            return error;
         }
     },
 

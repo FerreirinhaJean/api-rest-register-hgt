@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Register = require('./register');
 
 const userSchema = mongoose.Schema({
     firstName: {
@@ -19,7 +18,7 @@ const userSchema = mongoose.Schema({
         required: [true, 'CPF is required'],
         validate: {
             validator: (v) => {
-                return /\d{3}\.\d{3}\.\d{3}\-\d{2}/.test(v);
+                return /^(\d{3}\d{3}\d{3}\d{2})$/.test(v);
             },
             message: props => `${props.value} is not valid CPF`
         },
@@ -29,8 +28,7 @@ const userSchema = mongoose.Schema({
         type: Date,
         required: true,
         default: Date.now
-    },
-    registers: [Register.registerSchema]
+    }
 });
 
 const User = mongoose.model('users', userSchema);
