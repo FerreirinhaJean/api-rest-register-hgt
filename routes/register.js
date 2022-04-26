@@ -30,7 +30,10 @@ router.post('/:user_cpf', async (req, res) => {
 });
 
 router.delete('/:register_id', async (req, res) => {
-
+    const response = await register.delete({
+        _id: req.params.register_id
+    });
+    send(req, res, response);
 });
 
 // router.get('/:id', Register.authenticated, (request, response) => {

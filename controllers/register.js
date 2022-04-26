@@ -14,6 +14,10 @@ function responseError(errors) {
     return fieldErrors;
 };
 
+function isValidId(id) {
+    return mongoose.Types.ObjectId.isValid(id);
+};
+
 const register = {
     async getAll() {
         const error = {
@@ -71,6 +75,21 @@ const register = {
 
         try {
             return await Register.create(register);
+        } catch {
+            return error;
+        }
+    },
+
+    async delete({ _id }) {
+        const error = {
+            error: 'Invalid Id to deleted register'
+        };
+
+        if (!_id || !isValidId(_id)) return error;
+
+        try {
+            const deleteRegister = await Register.deleteOne({ _id });
+            return deleteRegister.deletedCount ? { id: _id, message: 'Register has been deleted' } : error;
         } catch {
             return error;
         }
