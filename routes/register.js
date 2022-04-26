@@ -29,6 +29,10 @@ router.post('/:user_cpf', async (req, res) => {
     send(req, res, response);
 });
 
+router.delete('/:register_id', async (req, res) => {
+
+});
+
 // router.get('/:id', Register.authenticated, (request, response) => {
 //     const id = parseInt(request.params.id);
 //     Register.findById(id, response);
