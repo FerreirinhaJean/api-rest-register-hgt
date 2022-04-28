@@ -3,6 +3,6 @@ module.exports = {
         port: process.env.PORT || 3000
     },
     database: {
-        url: process.env.DATABASE_URL || 'mongodb://localhost:27017/api-register-hgt'
+        url: process.env.MONGDB_URI || 'mongodb://localhost:27017/api-register-hgt'
     }
 };
