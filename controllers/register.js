@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Register = require('../models/register');
+const { update } = require('./user');
 const userController = require('./user');
 
 function responseError(errors) {
@@ -90,6 +91,34 @@ const register = {
         try {
             const deleteRegister = await Register.deleteOne({ _id });
             return deleteRegister.deletedCount ? { id: _id, message: 'Register has been deleted' } : error;
+        } catch {
+            return error;
+        }
+    },
+
+    async update({ _id, date, value, note, type, cpf }) {
+        const error = {
+            error: 'Invalid data to update a register'
+        };
+
+        const register = new Register({
+            date: date,
+            value: value,
+            note: note,
+            type: type,
+            cpf: cpf
+        });
+
+        const isNotValid = register.validateSync();
+
+        if (!_id) return error;
+        if (isNotValid) return {
+            ...error, fields: responseError(isNotValid.errors)
+        };
+
+        try {
+            const registerUpdate = await Register.updateOne({ _id }, { $set: { date, value, note, type, cpf } });
+            return registerUpdate.matchedCount ? this.getById({ _id }) : error;
         } catch {
             return error;
         }

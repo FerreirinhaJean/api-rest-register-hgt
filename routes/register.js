@@ -36,6 +36,18 @@ router.delete('/:register_id', async (req, res) => {
     send(req, res, response);
 });
 
+router.put('/:register_id', async (req, res) => {
+    const response = await register.update({
+        _id: req.params.register_id,
+        date: req.body.date,
+        value: req.body.value,
+        note: req.body.note,
+        type: req.body.type,
+        cpf: req.body.cpf
+    });
+    send(req, res, response);
+})
+
 // router.get('/:id', Register.authenticated, (request, response) => {
 //     const id = parseInt(request.params.id);
 //     Register.findById(id, response);
