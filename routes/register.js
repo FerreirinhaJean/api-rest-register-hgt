@@ -6,19 +6,19 @@ function send(req, res, response) {
     return response.error ? res.status(400).send(response) : res.status(200).send(response);
 };
 
-router.get('/', async (req, res) => {
+router.get('/', register.authenticated, async (req, res) => {
     const response = await register.getAll();
     send(req, res, response);
 });
 
-router.get('/:user_cpf', async (req, res) => {
+router.get('/:user_cpf', register.authenticated, async (req, res) => {
     const response = await register.getByCpf({
         cpf: req.params.user_cpf
     });
     send(req, res, response);
 });
 
-router.post('/:user_cpf', async (req, res) => {
+router.post('/:user_cpf', register.authenticated, async (req, res) => {
     let response = await register.create({
         cpf: req.params.user_cpf,
         date: req.body.date,
@@ -29,14 +29,14 @@ router.post('/:user_cpf', async (req, res) => {
     send(req, res, response);
 });
 
-router.delete('/:register_id', async (req, res) => {
+router.delete('/:register_id', register.authenticated, async (req, res) => {
     const response = await register.delete({
         _id: req.params.register_id
     });
     send(req, res, response);
 });
 
-router.put('/:register_id', async (req, res) => {
+router.put('/:register_id', register.authenticated, async (req, res) => {
     const response = await register.update({
         _id: req.params.register_id,
         date: req.body.date,

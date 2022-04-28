@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
+const envs = require('../config/envs');
 
 
 function isValidId(id) {
@@ -123,6 +124,14 @@ const user = {
         } catch {
             return error;
         }
+    },
+
+    authenticated(request, response, next) {
+        const error = { error: 'You are not authorized to access this API' };
+        if (request.headers.authorization === envs.auth.access)
+            return next();
+        else
+            return response.status(401).send(error);
     }
 
 };

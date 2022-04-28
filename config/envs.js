@@ -4,5 +4,8 @@ module.exports = {
     },
     database: {
         url: process.env.MONGDB_URI || 'mongodb://localhost:27017/api-register-hgt'
+    },
+    auth:{
+        access: 'MzEwNTk5SmVhbg=='
     }
 };

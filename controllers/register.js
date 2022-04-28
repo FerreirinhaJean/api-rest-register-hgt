@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Register = require('../models/register');
-const { update } = require('./user');
+const envs = require('../config/envs');
 const userController = require('./user');
 
 function responseError(errors) {
@@ -126,7 +126,7 @@ const register = {
 
     authenticated(request, response, next) {
         const error = { error: 'You are not authorized to access this API' };
-        if (request.headers.authorization === config.get('api.authorization'))
+        if (request.headers.authorization === envs.auth.access)
             return next();
         else
             return response.status(401).send(error);
@@ -135,7 +135,6 @@ const register = {
 
 
 module.exports = register;
-// const moment = require('moment');
 
 // class Register {
 //     add(register, response) {
