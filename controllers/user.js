@@ -27,14 +27,14 @@ async function isDuplicateCPF(cpf) {
 const user = {
     async getAll() {
         const error = {
-            error: 'Usuários não encontrados'
+            error: 'Users not found'
         };
         return await User.find() || error;
     },
 
     async getById({ _id }) {
         const error = {
-            error: 'Usuário não encontrado'
+            error: 'User not found'
         };
 
         if (!_id) return error;
@@ -51,7 +51,7 @@ const user = {
 
     async getByCpf({ cpf }) {
         const error = {
-            error: 'Usuário não encontrado com o CPF informado'
+            error: 'User not found'
         };
 
         try {
@@ -113,7 +113,7 @@ const user = {
 
     async delete({ _id }) {
         const error = {
-            error: 'Dados inválidos para deletar este usuário'
+            error: 'Invalid data to delete a user'
         };
 
         if (!_id || !isValidId(_id)) return error;
